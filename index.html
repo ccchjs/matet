@@ -115,8 +115,6 @@
   }
 
   /* ================= SCAN TAP-TO-OPEN OVERLAY ================= */
-  /* Phones block autoplay sound until there's a real tap, so when the QR
-     is scanned we show one quick tap prompt to unlock music + sfx. */
   #scanGate{
     display:none;
     position:fixed;
@@ -172,7 +170,8 @@
     align-items:center;
     justify-content:center;
     padding:20px;
-    overflow:hidden;
+    overflow-y:auto;
+    overflow-x:hidden;
   }
   #celebrate.active{display:flex;}
 
@@ -183,6 +182,8 @@
     display:flex;
     flex-direction:column;
     align-items:center;
+    margin:auto 0;
+    padding:30px 0;
   }
 
   .bday-reveal{
@@ -238,7 +239,7 @@
     font-family:'Architects Daughter',cursive;
     font-size:1.3rem;
     color:var(--concrete);
-    margin:0;
+    margin:0 0 6px;
   }
   .bday-emojis-bottom{
     font-size:1.8rem;
@@ -341,7 +342,6 @@
     margin-top:1px;
   }
 
-
 </style>
 </head>
 <body>
@@ -381,7 +381,7 @@
       <div class="bday-emojis">🎉🎂✨</div>
       <h1 class="bday-title">Happy Birthday!</h1>
       <p class="bday-sub">Maam Matet 💐🎈</p>
-       <p class="bday-sub">Wag puro bati send to my Gcash #09564731867</p>
+      <p class="bday-sub">Wag puro bati send to my Gcash #09564731867</p>
       <div class="bday-emojis-bottom">🥳🎊🎁🌟💖</div>
     </div>
     <div class="gift-box-wrap" id="giftBoxWrap">
@@ -447,7 +447,6 @@
     return sfxCtx;
   }
 
-  // Gift box lid popping open
   function playPopSound(){
     try{
       const ctx = getSfxCtx();
@@ -464,7 +463,6 @@
     }catch(e){}
   }
 
-  // Big confetti burst whoosh
   function playConfettiSound(){
     try{
       const ctx = getSfxCtx();
@@ -484,7 +482,6 @@
     }catch(e){}
   }
 
-  // Tiny "tick" each time a confetti piece lands on the ground
   function playLandSound(){
     try{
       const ctx = getSfxCtx();
@@ -512,9 +509,6 @@
     runGiftSequence();
   }
 
-  // When the page loads from a QR scan (?scan=1), phones need one real tap
-  // before they'll allow sound. Show a quick "tap to open" prompt instead
-  // of trying (and usually failing) to autoplay music silently.
   (function checkScanParam(){
     const params = new URLSearchParams(window.location.search);
     if(params.get('scan') === '1'){
@@ -523,7 +517,7 @@
       scanGate.classList.add('active');
       const btn = document.getElementById('scanGateBtn');
       const start = function(){
-        getSfxCtx(); // unlock audio context on this real user gesture
+        getSfxCtx();
         goToCelebration();
       };
       btn.addEventListener('click', start);
@@ -535,29 +529,24 @@
     const boxWrap = document.getElementById('giftBoxWrap');
     const reveal = document.getElementById('bdayReveal');
 
-    // 1. Whole box shakes like it's about to open
     boxWrap.classList.add('shake');
 
-    // 2. After shaking, only the lid pops open and flies off
     setTimeout(()=>{
       boxWrap.classList.remove('shake');
       boxWrap.classList.add('open');
       playPopSound();
     }, 1400);
 
-    // 3. Message emerges out of the box + confetti bursts from the box
     setTimeout(()=>{
       reveal.classList.add('show');
       launchConfettiFromBox();
       playConfettiSound();
     }, 2000);
 
-    // 3b. Once it has risen into place, let it sway gently like a tied balloon
     setTimeout(()=>{
       reveal.classList.add('sway');
     }, 2800);
 
-    // 4. A second smaller confetti burst for extra fun
     setTimeout(()=>{
       launchConfettiFromBox();
       playConfettiSound();
@@ -568,7 +557,7 @@
     const box = document.getElementById('giftBoxWrap');
     const rect = box.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
-    const originY = rect.top + 20; // near the box opening
+    const originY = rect.top + 20;
 
     const emojis = ['🎉','🎊','✨','💖','🎈','🌟','🎂','💐','🥳','🎁'];
 
@@ -581,7 +570,6 @@
     }
   }
 
-  // Pieces that float up like released balloons (with a little string)
   function spawnBalloonPiece(originX, originY, emojis){
     const wrap = document.createElement('div');
     wrap.className = 'confetti-balloon';
@@ -604,7 +592,6 @@
     setTimeout(()=>wrap.remove(), duration);
   }
 
-  // Pieces that pop out, then fall and scatter across the ground
   function spawnScatterPiece(originX, originY, emojis){
     const el = document.createElement('div');
     el.className='confetti-piece';
@@ -623,10 +610,7 @@
       { transform:`translate(${spreadX*0.35}px, ${arcUpY}px) scale(1) rotate(${Math.random()*180-90}deg)`, opacity:1, offset:0.3 },
       { transform:`translate(${spreadX}px, ${landY}px) scale(0.9) rotate(${Math.random()*360-180}deg)`, opacity:1 }
     ], { duration, easing:'cubic-bezier(.3,.7,.4,1)', fill:'forwards' });
-    // stays where it lands, scattered across the ground
 
-    // small "tick" sound right as it lands, staggered a bit so 24 pieces
-    // don't all click at once
     setTimeout(()=>{ playLandSound(); }, duration - 60 + Math.random()*40);
   }
 </script>
