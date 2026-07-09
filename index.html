@@ -6,6 +6,7 @@
 <title>Happy Birthday, Maam Matet!</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Architects+Daughter&family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
 <style>
   :root{
     --blue-deep:#0d2f4f;
@@ -113,218 +114,200 @@
     text-align:center;
   }
 
-  /* ================= CELEBRATION ================= */
+
+  /* ================= CELEBRATION (GIFT REVEAL) ================= */
   #celebrate{
     display:none;
     min-height:100vh;
-    background:var(--concrete);
-    color:var(--steel);
-  }
-  #celebrate.active{display:block;}
-
-  .hero{
     background:var(--steel);
     color:var(--concrete);
-    text-align:center;
-    padding:64px 20px 46px;
-    position:relative;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
     overflow:hidden;
   }
-  .hero::after{
+  #celebrate.active{display:flex;}
+
+  .gift-scene{
+    text-align:center;
+    width:100%;
+    max-width:420px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .bday-reveal{
+    opacity:0;
+    position:relative;
+    transform:scale(0.3) translateY(50px);
+    order:1;
+    margin-bottom:34px;
+  }
+  .bday-reveal::after{
     content:"";
     position:absolute;
-    bottom:0;left:0;right:0;height:12px;
-    background:repeating-linear-gradient(-45deg, var(--yellow) 0 18px, var(--steel) 18px 36px);
+    left:50%;
+    bottom:-30px;
+    width:2px;
+    height:30px;
+    background:rgba(255,255,255,0.5);
+    transform:translateX(-50%);
   }
-  .eyebrow{
-    font-family:'Space Mono',monospace;
-    font-size:0.7rem;
-    letter-spacing:3px;
-    text-transform:uppercase;
-    color:var(--yellow);
-    margin-bottom:14px;
+  .bday-reveal.show{
+    animation:emerge-from-box 0.8s cubic-bezier(.2,.8,.3,1.2) forwards;
   }
-  .hero h1{
+  .bday-reveal.sway{
+    transform-origin:50% 100%;
+    animation:balloon-sway 3.2s ease-in-out infinite;
+  }
+  @keyframes balloon-sway{
+    0%,100%{transform:rotate(-3deg) translateY(0);}
+    50%{transform:rotate(3deg) translateY(-6px);}
+  }
+  @keyframes emerge-from-box{
+    0%{opacity:0;transform:scale(0.25) translateY(80px) rotate(0deg);}
+    40%{opacity:1;transform:scale(1.05) translateY(-12px) rotate(-3deg);}
+    60%{opacity:1;transform:scale(1) translateY(5px) rotate(3deg);}
+    80%{opacity:1;transform:scale(1) translateY(-4px) rotate(-2deg);}
+    100%{opacity:1;transform:scale(1) translateY(0) rotate(0deg);}
+  }
+  .bday-emojis{
+    font-size:2.6rem;
+    margin-bottom:6px;
+  }
+  .bday-title{
     font-family:'Oswald',sans-serif;
     font-weight:700;
     text-transform:uppercase;
-    font-size:clamp(2.2rem,7vw,3.6rem);
-    margin:0 0 14px;
     letter-spacing:1px;
+    font-size:clamp(1.9rem,8vw,2.8rem);
+    color:var(--yellow);
+    margin:0 0 8px;
   }
-  .hero p{
+  .bday-sub{
     font-family:'Architects Daughter',cursive;
-    font-size:1.15rem;
-    max-width:480px;
-    margin:0 auto;
-    color:#cfd3d6;
+    font-size:1.3rem;
+    color:var(--concrete);
+    margin:0;
+  }
+  .bday-emojis-bottom{
+    font-size:1.8rem;
+    margin-top:14px;
   }
 
-  .section-title{
-    font-family:'Oswald',sans-serif;
-    text-transform:uppercase;
-    font-weight:600;
-    letter-spacing:1px;
-    text-align:center;
-    font-size:1.5rem;
-    margin:54px auto 4px;
-    color:var(--steel);
-  }
-  .section-sub{
-    text-align:center;
-    font-family:'Space Mono',monospace;
-    font-size:0.68rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    color:#8a9099;
-    margin-bottom:30px;
-  }
-
-  /* Topping-out flag interaction */
-  .flag-wrap{display:flex;justify-content:center;padding:0 20px;}
-  .flag-card{
-    background:#fff;
-    border-radius:10px;
-    padding:34px 26px 26px;
-    max-width:380px;
-    width:100%;
-    text-align:center;
-    box-shadow:0 12px 30px rgba(43,47,51,0.12);
-    border:1px solid #e0ddd3;
-  }
-  .rig{
+  /* ---- The gift box, with a separately-animated lid ---- */
+  .gift-box-wrap{
+    order:2;
     position:relative;
-    height:110px;
-    margin:0 auto 10px;
-    width:120px;
+    width:150px;
+    height:120px;
+    margin-top:10px;
   }
-  .beam{
+  .gift-box-wrap.shake{
+    animation:shake 0.35s ease-in-out 4;
+  }
+  @keyframes shake{
+    0%,100%{transform:rotate(0deg) translateY(0);}
+    25%{transform:rotate(-7deg) translateY(-2px);}
+    75%{transform:rotate(7deg) translateY(-2px);}
+  }
+  .box-body{
     position:absolute;
-    bottom:0;left:50%;
-    transform:translateX(-50%);
-    width:8px;height:70px;
-    background:var(--steel-light);
+    left:8px;
+    top:52px;
+    width:134px;
+    height:64px;
+    background:var(--yellow);
+    border-radius:4px 4px 10px 10px;
+    box-shadow:0 8px 18px rgba(0,0,0,0.35);
+    z-index:1;
   }
-  .beam::before, .beam::after{
+  .box-body::before{
     content:"";
     position:absolute;
-    background:var(--steel-light);
-  }
-  .beam::before{width:60px;height:6px;bottom:0;left:-26px;}
-  .beam::after{width:6px;height:70px;top:0;left:52px;transform:rotate(20deg);transform-origin:bottom;}
-  .flagpole{
-    position:absolute;
-    top:-38px;left:50%;
-    width:3px;height:40px;
-    background:var(--steel-light);
-    transform-origin:bottom;
-    transition:transform 0.9s cubic-bezier(.2,.9,.3,1.2);
-  }
-  .flag{
-    position:absolute;
-    top:-38px;left:3px;
-    width:26px;height:18px;
+    top:0;bottom:0;left:50%;
+    transform:translateX(-50%);
+    width:16px;
     background:var(--orange);
-    clip-path:polygon(0 0,100% 15%,0 100%);
-    opacity:0;
-    transition:opacity 0.4s ease 0.5s;
   }
-  .rig.raised .flagpole{transform:rotate(0deg);}
-  .rig.raised .flag{opacity:1;}
-  .hoist-btn{
-    margin-top:14px;
+  .box-lid{
+    position:absolute;
+    left:-4px;
+    top:26px;
+    width:158px;
+    height:28px;
     background:var(--orange);
-    color:#fff;
-    border:none;
-    padding:12px 22px;
+    border-radius:6px 6px 2px 2px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+    z-index:2;
+    transform-origin:15% 100%;
+    transition:transform 0.7s cubic-bezier(.25,.6,.3,1.5), opacity 0.7s ease;
+  }
+  .box-lid::before{
+    content:"";
+    position:absolute;
+    top:0;bottom:0;left:50%;
+    transform:translateX(-50%);
+    width:16px;
+    background:var(--yellow);
+  }
+  .box-lid::after{
+    content:"🎀";
+    position:absolute;
+    top:-22px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:1.8rem;
+  }
+  .gift-box-wrap.open .box-lid{
+    transform:translate(22px,168px) rotate(22deg);
+    opacity:1;
+    transition:transform 0.65s cubic-bezier(.55,.06,.68,.19);
+  }
+
+  .confetti-piece{
+    position:fixed;
+    font-size:1.6rem;
+    z-index:999;
+    pointer-events:none;
+    line-height:1;
+    will-change:transform;
+  }
+
+  .confetti-balloon{
+    position:fixed;
+    z-index:999;
+    pointer-events:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:1.6rem;
+    will-change:transform;
+  }
+  .balloon-string{
+    width:1px;
+    height:16px;
+    background:rgba(255,255,255,0.55);
+    margin-top:1px;
+  }
+
+
+  .sound-btn{
+    position:fixed;
+    top:16px;
+    right:16px;
+    z-index:1000;
+    background:rgba(255,255,255,0.15);
+    color:var(--concrete);
+    border:1px solid rgba(255,255,255,0.35);
+    padding:8px 14px;
     border-radius:30px;
     font-family:'Nunito',sans-serif;
-    font-weight:800;
-    font-size:0.92rem;
+    font-size:0.8rem;
+    font-weight:700;
     cursor:pointer;
-    box-shadow:0 6px 16px rgba(244,98,58,0.35);
-  }
-  .hoist-btn:active{transform:scale(0.97);}
-  .flag-msg{
-    font-family:'Architects Daughter',cursive;
-    color:var(--steel);
-    margin-top:14px;
-    min-height:24px;
-    font-size:1.02rem;
-  }
-
-  /* Notes = red-line comments on a blueprint */
-  .blueprint-panel{
-    background:var(--blue-deep);
-    background-image:repeating-linear-gradient(0deg, rgba(191,227,255,0.05) 0 1px, transparent 1px 24px),
-      repeating-linear-gradient(90deg, rgba(191,227,255,0.05) 0 1px, transparent 1px 24px);
-    border-radius:6px;
-    margin:20px auto 10px;
-    max-width:920px;
-    padding:34px 22px 40px;
-  }
-  .notes-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(190px,1fr));
-    gap:20px;
-    max-width:860px;
-    margin:0 auto;
-  }
-  .note{
-    background:#fffef8;
-    padding:18px 16px;
-    font-family:'Architects Daughter',cursive;
-    color:#2b2f33;
-    font-size:0.95rem;
-    line-height:1.45;
-    border-left:4px solid var(--orange);
-    box-shadow:0 8px 18px rgba(0,0,0,0.25);
-  }
-  .note strong{
-    display:block;
-    margin-top:8px;
-    color:var(--orange);
-    font-family:'Space Mono',monospace;
-    font-size:0.7rem;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-  }
-
-  /* As-built inspection report */
-  .report-card{
-    max-width:440px;
-    margin:20px auto 0;
-    background:#fff;
-    border:2px solid var(--steel);
-    border-radius:8px;
-    overflow:hidden;
-  }
-  .report-card .stamp{
-    background:var(--steel);
-    color:var(--yellow);
-    text-align:center;
-    padding:10px;
-    font-family:'Space Mono',monospace;
-    font-size:0.72rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-  }
-  .report-card table{width:100%;border-collapse:collapse;font-family:'Nunito',sans-serif;font-size:0.88rem;}
-  .report-card td{padding:11px 14px;border-top:1px solid #eee;}
-  .report-card td:last-child{text-align:right;font-family:'Space Mono',monospace;font-weight:700;color:#2e8f4f;}
-
-  footer{
-    text-align:center;
-    padding:44px 20px 16px;
-    font-family:'Architects Daughter',cursive;
-    color:#8a9099;
-    font-size:0.95rem;
-  }
-
-  .confetti-piece{position:fixed;top:-20px;width:8px;height:14px;opacity:0.9;z-index:999;pointer-events:none;}
-
-  @media (max-width:480px){
-    .hero h1{font-size:2.3rem;}
+    backdrop-filter:blur(4px);
   }
 </style>
 </head>
@@ -349,15 +332,24 @@
   </div>
 </div>
 
-<!-- ================= CELEBRATION ================= -->
+<!-- ================= CELEBRATION (GIFT REVEAL) ================= -->
 <div id="celebrate">
-  <div class="hero">
-    <div class="eyebrow">Project Milestone Reached</div>
-    <h1>Happy Birthday,<br>Maam Matet!</h1>
-    <p>Isa kang solid civil engineer at mas solid pang officemate. Sana araw mo, tulad ng mga proyekto mong tapos — matibay, well-built, at walang crack! 🏗️</p>
+  <button class="sound-btn" id="soundBtn" onclick="unmuteMusic()">🔊 I-tap para sa tunog</button>
+  <div class="gift-scene">
+    <div class="bday-reveal" id="bdayReveal">
+      <div class="bday-emojis">🎉🎂✨</div>
+      <h1 class="bday-title">Happy Birthday!</h1>
+      <p class="bday-sub">Maam Matet 💐🎈</p>
+      <div class="bday-emojis-bottom">🥳🎊🎁🌟💖</div>
+    </div>
+    <div class="gift-box-wrap" id="giftBoxWrap">
+      <div class="box-lid" id="boxLid"></div>
+      <div class="box-body"></div>
+    </div>
   </div>
-
-  <footer>Made with 🏗️ para kay Maam Matet. Happy Birthday!</footer>
+  <div style="position:fixed;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;">
+    <div id="ytplayer"></div>
+  </div>
 </div>
 
 <script>
@@ -376,11 +368,50 @@
     correctLevel: QRCode.CorrectLevel.M
   });
 
+  // ---- YouTube background music (hidden player) ----
+  let ytPlayer;
+  let ytReady = false;
+  function onYouTubeIframeAPIReady(){
+    ytPlayer = new YT.Player('ytplayer', {
+      height:'1',
+      width:'1',
+      videoId:'4inCcaGBgts',
+      playerVars:{ autoplay:0, controls:0, disablekb:1, modestbranding:1, playsinline:1, rel:0 },
+      events:{ 'onReady': function(){ ytReady = true; } }
+    });
+  }
+
+  function tryPlayMusic(){
+    if(!ytReady || !ytPlayer) { setTimeout(tryPlayMusic, 400); return; }
+    try{
+      ytPlayer.mute();
+      ytPlayer.playVideo();
+      setTimeout(()=>{
+        try{
+          ytPlayer.unMute();
+          ytPlayer.setVolume(100);
+        }catch(e){}
+      }, 300);
+    }catch(e){}
+  }
+
+  function unmuteMusic(){
+    if(ytPlayer){
+      try{
+        ytPlayer.unMute();
+        ytPlayer.setVolume(100);
+        ytPlayer.playVideo();
+      }catch(e){}
+    }
+    const btn = document.getElementById('soundBtn');
+    if(btn) btn.style.display='none';
+  }
+
   function goToCelebration(){
     document.getElementById('gate').style.display='none';
     document.getElementById('celebrate').classList.add('active');
-    launchConfetti();
     window.scrollTo(0,0);
+    runGiftSequence();
   }
 
   (function checkScanParam(){
@@ -390,33 +421,97 @@
     }
   })();
 
-  let hoisted = false;
-  function hoistFlag(){
-    if(hoisted) return;
-    hoisted = true;
-    document.getElementById('rig').classList.add('raised');
-    document.getElementById('flagMsg').textContent = "Topped out! Sana matupad ang wish mo, Maam Matet! 🎉";
-    document.getElementById('hoistBtn').textContent = "🏁 Wish Hoisted!";
-    launchConfetti();
+  function runGiftSequence(){
+    const boxWrap = document.getElementById('giftBoxWrap');
+    const reveal = document.getElementById('bdayReveal');
+
+    // 1. Whole box shakes like it's about to open
+    boxWrap.classList.add('shake');
+
+    // 2. After shaking, only the lid pops open and flies off
+    setTimeout(()=>{
+      boxWrap.classList.remove('shake');
+      boxWrap.classList.add('open');
+    }, 1400);
+
+    // 3. Message emerges out of the box + confetti bursts from the box + music
+    setTimeout(()=>{
+      reveal.classList.add('show');
+      launchConfettiFromBox();
+      tryPlayMusic();
+    }, 2000);
+
+    // 3b. Once it has risen into place, let it sway gently like a tied balloon
+    setTimeout(()=>{
+      reveal.classList.add('sway');
+    }, 2800);
+
+    // 4. A second smaller confetti burst for extra fun
+    setTimeout(()=>{
+      launchConfettiFromBox();
+    }, 3400);
   }
 
-  function launchConfetti(){
-    const colors = ['#f4623a','#ffc72c','#0d2f4f','#4a5158','#bfe3ff'];
-    for(let i=0;i<40;i++){
-      const el = document.createElement('div');
-      el.className='confetti-piece';
-      el.style.left = Math.random()*100+'vw';
-      el.style.background = colors[Math.floor(Math.random()*colors.length)];
-      el.style.transform = `rotate(${Math.random()*360}deg)`;
-      document.body.appendChild(el);
-      const duration = 2500 + Math.random()*2000;
-      const drift = (Math.random()-0.5)*200;
-      el.animate([
-        { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
-        { transform:`translate(${drift}px, 100vh) rotate(720deg)`, opacity:0.9 }
-      ], { duration, easing:'ease-in' });
-      setTimeout(()=>el.remove(), duration);
+  function launchConfettiFromBox(){
+    const box = document.getElementById('giftBoxWrap');
+    const rect = box.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + 20; // near the box opening
+
+    const emojis = ['🎉','🎊','✨','💖','🎈','🌟','🎂','💐','🥳','🎁'];
+
+    for(let i=0;i<24;i++){
+      if(i % 2 === 0){
+        spawnBalloonPiece(originX, originY, emojis);
+      } else {
+        spawnScatterPiece(originX, originY, emojis);
+      }
     }
+  }
+
+  // Pieces that float up like released balloons (with a little string)
+  function spawnBalloonPiece(originX, originY, emojis){
+    const wrap = document.createElement('div');
+    wrap.className = 'confetti-balloon';
+    wrap.innerHTML = `<span>${emojis[Math.floor(Math.random()*emojis.length)]}</span><span class="balloon-string"></span>`;
+    wrap.style.left = originX + 'px';
+    wrap.style.top = originY + 'px';
+    document.body.appendChild(wrap);
+
+    const driftX = (Math.random()-0.5) * 160;
+    const midX = driftX * 0.4 + (Math.random()-0.5) * 30;
+    const riseY = -(window.innerHeight + 100 + Math.random()*120);
+    const duration = 3200 + Math.random()*1800;
+
+    wrap.animate([
+      { transform:`translate(0,0) rotate(0deg)`, opacity:0 },
+      { transform:`translate(${midX}px, ${riseY*0.35}px) rotate(${Math.random()*14-7}deg)`, opacity:1, offset:0.25 },
+      { transform:`translate(${driftX}px, ${riseY}px) rotate(${Math.random()*14-7}deg)`, opacity:0.85 }
+    ], { duration, easing:'ease-out' });
+
+    setTimeout(()=>wrap.remove(), duration);
+  }
+
+  // Pieces that pop out, then fall and scatter across the ground
+  function spawnScatterPiece(originX, originY, emojis){
+    const el = document.createElement('div');
+    el.className='confetti-piece';
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = originX + 'px';
+    el.style.top = originY + 'px';
+    document.body.appendChild(el);
+
+    const spreadX = (Math.random()-0.5) * Math.min(window.innerWidth*0.9, 500);
+    const arcUpY = -(30 + Math.random()*70);
+    const landY = (window.innerHeight - originY) - 30 + (Math.random()*60 - 30);
+    const duration = 1400 + Math.random()*700;
+
+    el.animate([
+      { transform:`translate(0,0) scale(0.3) rotate(0deg)`, opacity:0 },
+      { transform:`translate(${spreadX*0.35}px, ${arcUpY}px) scale(1) rotate(${Math.random()*180-90}deg)`, opacity:1, offset:0.3 },
+      { transform:`translate(${spreadX}px, ${landY}px) scale(0.9) rotate(${Math.random()*360-180}deg)`, opacity:1 }
+    ], { duration, easing:'cubic-bezier(.3,.7,.4,1)', fill:'forwards' });
+    // stays where it lands, scattered across the ground
   }
 </script>
 </body>
