@@ -114,6 +114,54 @@
     text-align:center;
   }
 
+  /* ================= SCAN TAP-TO-OPEN OVERLAY ================= */
+  /* Phones block autoplay sound until there's a real tap, so when the QR
+     is scanned we show one quick tap prompt to unlock music + sfx. */
+  #scanGate{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:var(--blue-deep);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    text-align:center;
+  }
+  #scanGate.active{display:flex;}
+  .scan-gate-inner{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .scan-gate-emoji{
+    font-size:3rem;
+    animation:pulse-tap 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse-tap{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.12);}
+  }
+  .scan-gate-title{
+    font-family:'Architects Daughter',cursive;
+    font-size:1.5rem;
+    color:var(--yellow);
+    margin:0;
+  }
+  .scan-gate-btn{
+    margin-top:8px;
+    font-family:'Space Mono',monospace;
+    font-size:0.85rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    background:var(--orange);
+    border:none;
+    padding:14px 28px;
+    border-radius:6px;
+    cursor:pointer;
+  }
 
   /* ================= CELEBRATION (GIFT REVEAL) ================= */
   #celebrate{
@@ -313,7 +361,16 @@
       <div><span>Discipline</span>Officemate Affairs</div>
       <div><span>Status</span>Approved For Celebration</div>
     </div>
-   
+    <button class="manual-link" onclick="goToCelebration()">[ Already scanned? Tap here to open ]</button>
+  </div>
+</div>
+
+<!-- ================= SCAN TAP-TO-OPEN (unlocks sound on phones) ================= -->
+<div id="scanGate">
+  <div class="scan-gate-inner">
+    <div class="scan-gate-emoji">🎁</div>
+    <p class="scan-gate-title">Tap to open your surprise!</p>
+    <button class="scan-gate-btn" id="scanGateBtn">🔊 Open with sound</button>
   </div>
 </div>
 
@@ -379,18 +436,97 @@
     }catch(e){}
   }
 
+  // ---- Simple synthesized sound effects (no external audio files needed) ----
+  let sfxCtx;
+  function getSfxCtx(){
+    if(!sfxCtx){
+      sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(sfxCtx.state === 'suspended'){ sfxCtx.resume(); }
+    return sfxCtx;
+  }
+
+  // Gift box lid popping open
+  function playPopSound(){
+    try{
+      const ctx = getSfxCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(180, ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.12);
+      g.gain.setValueAtTime(0.35, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      o.stop(ctx.currentTime + 0.3);
+    }catch(e){}
+  }
+
+  // Big confetti burst whoosh
+  function playConfettiSound(){
+    try{
+      const ctx = getSfxCtx();
+      for(let i=0;i<6;i++){
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = 'sine';
+        const t = ctx.currentTime + i*0.05;
+        const freq = 700 + Math.random()*900;
+        o.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.09, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(t);
+        o.stop(t + 0.18);
+      }
+    }catch(e){}
+  }
+
+  // Tiny "tick" each time a confetti piece lands on the ground
+  function playLandSound(){
+    try{
+      const ctx = getSfxCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'triangle';
+      const t = ctx.currentTime;
+      const freq = 500 + Math.random()*400;
+      o.frequency.setValueAtTime(freq, t);
+      o.frequency.exponentialRampToValueAtTime(freq*0.6, t + 0.08);
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t);
+      o.stop(t + 0.09);
+    }catch(e){}
+  }
+
   function goToCelebration(){
     document.getElementById('gate').style.display='none';
+    document.getElementById('scanGate').classList.remove('active');
     document.getElementById('celebrate').classList.add('active');
     window.scrollTo(0,0);
     tryPlayMusic();
     runGiftSequence();
   }
 
+  // When the page loads from a QR scan (?scan=1), phones need one real tap
+  // before they'll allow sound. Show a quick "tap to open" prompt instead
+  // of trying (and usually failing) to autoplay music silently.
   (function checkScanParam(){
     const params = new URLSearchParams(window.location.search);
     if(params.get('scan') === '1'){
-      goToCelebration();
+      document.getElementById('gate').style.display='none';
+      const scanGate = document.getElementById('scanGate');
+      scanGate.classList.add('active');
+      const btn = document.getElementById('scanGateBtn');
+      const start = function(){
+        getSfxCtx(); // unlock audio context on this real user gesture
+        goToCelebration();
+      };
+      btn.addEventListener('click', start);
+      scanGate.addEventListener('click', start);
     }
   })();
 
@@ -405,12 +541,14 @@
     setTimeout(()=>{
       boxWrap.classList.remove('shake');
       boxWrap.classList.add('open');
+      playPopSound();
     }, 1400);
 
     // 3. Message emerges out of the box + confetti bursts from the box
     setTimeout(()=>{
       reveal.classList.add('show');
       launchConfettiFromBox();
+      playConfettiSound();
     }, 2000);
 
     // 3b. Once it has risen into place, let it sway gently like a tied balloon
@@ -421,6 +559,7 @@
     // 4. A second smaller confetti burst for extra fun
     setTimeout(()=>{
       launchConfettiFromBox();
+      playConfettiSound();
     }, 3400);
   }
 
@@ -484,6 +623,10 @@
       { transform:`translate(${spreadX}px, ${landY}px) scale(0.9) rotate(${Math.random()*360-180}deg)`, opacity:1 }
     ], { duration, easing:'cubic-bezier(.3,.7,.4,1)', fill:'forwards' });
     // stays where it lands, scattered across the ground
+
+    // small "tick" sound right as it lands, staggered a bit so 24 pieces
+    // don't all click at once
+    setTimeout(()=>{ playLandSound(); }, duration - 60 + Math.random()*40);
   }
 </script>
 </body>
