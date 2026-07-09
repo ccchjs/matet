@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Maam Matet!</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Architects+Daughter&family=Nunito:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --blue-deep:#0d2f4f;
+    --blue-line:#bfe3ff;
+    --blue-line-dim:#5a86a3;
+    --orange:#f4623a;
+    --yellow:#ffc72c;
+    --concrete:#e9e6de;
+    --steel:#2b2f33;
+    --steel-light:#4a5158;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:var(--blue-deep);
+    color:var(--blue-line);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ================= GATE / QR (BLUEPRINT) ================= */
+  #gate{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+      repeating-linear-gradient(0deg, rgba(191,227,255,0.07) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, rgba(191,227,255,0.07) 0 1px, transparent 1px 28px),
+      var(--blue-deep);
+  }
+  .sheet{
+    max-width:460px;
+    width:100%;
+    border:2px solid var(--blue-line);
+    position:relative;
+    padding:26px 24px 0;
+  }
+  .sheet::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:1px dashed rgba(191,227,255,0.4);
+    pointer-events:none;
+  }
+  .dim-label{
+    font-family:'Space Mono',monospace;
+    font-size:0.62rem;
+    letter-spacing:1.5px;
+    color:var(--blue-line-dim);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .memo-title{
+    font-family:'Architects Daughter',cursive;
+    font-size:1.7rem;
+    line-height:1.3;
+    color:var(--yellow);
+    margin:0 0 22px;
+  }
+  #qrcode{
+    background:var(--blue-line);
+    padding:12px;
+    display:inline-block;
+    box-shadow:0 10px 26px rgba(0,0,0,0.35);
+  }
+  #qrcode img, #qrcode canvas{display:block;}
+  .qr-row{text-align:center;margin-bottom:18px;}
+  .scan-hint{
+    font-family:'Space Mono',monospace;
+    font-size:0.75rem;
+    color:var(--blue-line-dim);
+    text-align:center;
+    line-height:1.6;
+    margin-bottom:20px;
+  }
+  /* Title block, like a real blueprint drawing sheet */
+  .title-block{
+    border-top:2px solid var(--blue-line);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+  }
+  .title-block div{
+    padding:8px 10px;
+    border-right:1px solid rgba(191,227,255,0.3);
+    border-bottom:1px solid rgba(191,227,255,0.3);
+  }
+  .title-block div:nth-child(2n){border-right:none;}
+  .title-block span{display:block;color:var(--blue-line-dim);font-size:0.6rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;}
+  .manual-link{
+    display:block;
+    width:100%;
+    background:none;
+    border:none;
+    color:var(--orange);
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:14px 0 18px;
+    text-align:center;
+  }
+
+  /* ================= CELEBRATION ================= */
+  #celebrate{
+    display:none;
+    min-height:100vh;
+    background:var(--concrete);
+    color:var(--steel);
+  }
+  #celebrate.active{display:block;}
+
+  .hero{
+    background:var(--steel);
+    color:var(--concrete);
+    text-align:center;
+    padding:64px 20px 46px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    bottom:0;left:0;right:0;height:12px;
+    background:repeating-linear-gradient(-45deg, var(--yellow) 0 18px, var(--steel) 18px 36px);
+  }
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:clamp(2.2rem,7vw,3.6rem);
+    margin:0 0 14px;
+    letter-spacing:1px;
+  }
+  .hero p{
+    font-family:'Architects Daughter',cursive;
+    font-size:1.15rem;
+    max-width:480px;
+    margin:0 auto;
+    color:#cfd3d6;
+  }
+
+  .section-title{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-weight:600;
+    letter-spacing:1px;
+    text-align:center;
+    font-size:1.5rem;
+    margin:54px auto 4px;
+    color:var(--steel);
+  }
+  .section-sub{
+    text-align:center;
+    font-family:'Space Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#8a9099;
+    margin-bottom:30px;
+  }
+
+  /* Topping-out flag interaction */
+  .flag-wrap{display:flex;justify-content:center;padding:0 20px;}
+  .flag-card{
+    background:#fff;
+    border-radius:10px;
+    padding:34px 26px 26px;
+    max-width:380px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(43,47,51,0.12);
+    border:1px solid #e0ddd3;
+  }
+  .rig{
+    position:relative;
+    height:110px;
+    margin:0 auto 10px;
+    width:120px;
+  }
+  .beam{
+    position:absolute;
+    bottom:0;left:50%;
+    transform:translateX(-50%);
+    width:8px;height:70px;
+    background:var(--steel-light);
+  }
+  .beam::before, .beam::after{
+    content:"";
+    position:absolute;
+    background:var(--steel-light);
+  }
+  .beam::before{width:60px;height:6px;bottom:0;left:-26px;}
+  .beam::after{width:6px;height:70px;top:0;left:52px;transform:rotate(20deg);transform-origin:bottom;}
+  .flagpole{
+    position:absolute;
+    top:-38px;left:50%;
+    width:3px;height:40px;
+    background:var(--steel-light);
+    transform-origin:bottom;
+    transition:transform 0.9s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .flag{
+    position:absolute;
+    top:-38px;left:3px;
+    width:26px;height:18px;
+    background:var(--orange);
+    clip-path:polygon(0 0,100% 15%,0 100%);
+    opacity:0;
+    transition:opacity 0.4s ease 0.5s;
+  }
+  .rig.raised .flagpole{transform:rotate(0deg);}
+  .rig.raised .flag{opacity:1;}
+  .hoist-btn{
+    margin-top:14px;
+    background:var(--orange);
+    color:#fff;
+    border:none;
+    padding:12px 22px;
+    border-radius:30px;
+    font-family:'Nunito',sans-serif;
+    font-weight:800;
+    font-size:0.92rem;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(244,98,58,0.35);
+  }
+  .hoist-btn:active{transform:scale(0.97);}
+  .flag-msg{
+    font-family:'Architects Daughter',cursive;
+    color:var(--steel);
+    margin-top:14px;
+    min-height:24px;
+    font-size:1.02rem;
+  }
+
+  /* Notes = red-line comments on a blueprint */
+  .blueprint-panel{
+    background:var(--blue-deep);
+    background-image:repeating-linear-gradient(0deg, rgba(191,227,255,0.05) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(90deg, rgba(191,227,255,0.05) 0 1px, transparent 1px 24px);
+    border-radius:6px;
+    margin:20px auto 10px;
+    max-width:920px;
+    padding:34px 22px 40px;
+  }
+  .notes-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(190px,1fr));
+    gap:20px;
+    max-width:860px;
+    margin:0 auto;
+  }
+  .note{
+    background:#fffef8;
+    padding:18px 16px;
+    font-family:'Architects Daughter',cursive;
+    color:#2b2f33;
+    font-size:0.95rem;
+    line-height:1.45;
+    border-left:4px solid var(--orange);
+    box-shadow:0 8px 18px rgba(0,0,0,0.25);
+  }
+  .note strong{
+    display:block;
+    margin-top:8px;
+    color:var(--orange);
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+
+  /* As-built inspection report */
+  .report-card{
+    max-width:440px;
+    margin:20px auto 0;
+    background:#fff;
+    border:2px solid var(--steel);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .report-card .stamp{
+    background:var(--steel);
+    color:var(--yellow);
+    text-align:center;
+    padding:10px;
+    font-family:'Space Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .report-card table{width:100%;border-collapse:collapse;font-family:'Nunito',sans-serif;font-size:0.88rem;}
+  .report-card td{padding:11px 14px;border-top:1px solid #eee;}
+  .report-card td:last-child{text-align:right;font-family:'Space Mono',monospace;font-weight:700;color:#2e8f4f;}
+
+  footer{
+    text-align:center;
+    padding:44px 20px 16px;
+    font-family:'Architects Daughter',cursive;
+    color:#8a9099;
+    font-size:0.95rem;
+  }
+
+  .confetti-piece{position:fixed;top:-20px;width:8px;height:14px;opacity:0.9;z-index:999;pointer-events:none;}
+
+  @media (max-width:480px){
+    .hero h1{font-size:2.3rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= GATE / QR ================= -->
+<div id="gate">
+  <div class="sheet">
+    <div class="dim-label">▸ Site Memo — For Immediate Release</div>
+    <h2 class="memo-title">I-scan mo 'to, Maam Matet!</h2>
+    <div class="qr-row">
+      <div id="qrcode"></div>
+    </div>
+    <p class="scan-hint">OPEN CAMERA APP → POINT AT QR CODE<br>ETA TO SURPRISE: A FEW SECONDS</p>
+    <div class="title-block">
+      <div><span>Project</span>Birthday Surprise</div>
+      <div><span>Client</span>Maam Matet, CE</div>
+      <div><span>Discipline</span>Officemate Affairs</div>
+      <div><span>Status</span>Approved For Celebration</div>
+    </div>
+    <button class="manual-link" onclick="goToCelebration()">[ Already scanned? Tap here to open ]</button>
+  </div>
+</div>
+
+<!-- ================= CELEBRATION ================= -->
+<div id="celebrate">
+  <div class="hero">
+    <div class="eyebrow">Project Milestone Reached</div>
+    <h1>Happy Birthday,<br>Maam Matet!</h1>
+    <p>Isa kang solid civil engineer at mas solid pang officemate. Sana araw mo, tulad ng mga proyekto mong tapos — matibay, well-built, at walang crack! 🏗️</p>
+  </div>
+
+  <h2 class="section-title">Topping-Out Ceremony</h2>
+  <p class="section-sub">Raise the flag to make a wish</p>
+  <div class="flag-wrap">
+    <div class="flag-card">
+      <div class="rig" id="rig">
+        <div class="beam"></div>
+        <div class="flagpole"></div>
+        <div class="flag"></div>
+      </div>
+      <button class="hoist-btn" id="hoistBtn" onclick="hoistFlag()">🚧 Itaas ang Bandera</button>
+      <div class="flag-msg" id="flagMsg">Structure complete pero may isa pang wish na kailangan i-top out.</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Red-Line Comments</h2>
+  <p class="section-sub">Annotations from the team</p>
+  <div class="blueprint-panel">
+    <div class="notes-grid">
+      <div class="note">Salamat sa lahat ng tulong mo sa mga project namin, Maam! <strong>— Officemate</strong></div>
+      <div class="note">Sobrang saya makasama sa site at sa office, Happy Birthday! <strong>— Kasamahan</strong></div>
+      <div class="note">Solid ka sa trabaho at mas solid pa bilang kaibigan. <strong>— Teammate</strong></div>
+      <div class="note">Sana araw mo puno ng blessings, tulad ng dami mong overtime, char! <strong>— Officemate</strong></div>
+      <div class="note">Ang galing mong civil engineer, inspirasyon namin! <strong>— Junior Engineer</strong></div>
+      <div class="note">Happy birthday sa pinaka-approachable na Ma'am sa opisina! <strong>— The Team</strong></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">As-Built Inspection Report</h2>
+  <p class="section-sub">Findings on Maam Matet</p>
+  <div class="report-card">
+    <div class="stamp">✓ Passed Final Inspection</div>
+    <table>
+      <tr><td>Foundation of Kindness</td><td>100%</td></tr>
+      <tr><td>Load-Bearing Patience</td><td>100%</td></tr>
+      <tr><td>Structural Integrity of Friendship</td><td>PASSED</td></tr>
+      <tr><td>Overall Rating</td><td>A+</td></tr>
+    </table>
+  </div>
+
+  <footer>Made with 🏗️ para kay Maam Matet. Happy Birthday!</footer>
+</div>
+
+<script>
+  function buildScanURL(){
+    const url = new URL(window.location.href);
+    url.searchParams.set('scan','1');
+    return url.toString();
+  }
+
+  new QRCode(document.getElementById("qrcode"), {
+    text: buildScanURL(),
+    width: 190,
+    height: 190,
+    colorDark: "#0d2f4f",
+    colorLight: "#bfe3ff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  function goToCelebration(){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('celebrate').classList.add('active');
+    launchConfetti();
+    window.scrollTo(0,0);
+  }
+
+  (function checkScanParam(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('scan') === '1'){
+      goToCelebration();
+    }
+  })();
+
+  let hoisted = false;
+  function hoistFlag(){
+    if(hoisted) return;
+    hoisted = true;
+    document.getElementById('rig').classList.add('raised');
+    document.getElementById('flagMsg').textContent = "Topped out! Sana matupad ang wish mo, Maam Matet! 🎉";
+    document.getElementById('hoistBtn').textContent = "🏁 Wish Hoisted!";
+    launchConfetti();
+  }
+
+  function launchConfetti(){
+    const colors = ['#f4623a','#ffc72c','#0d2f4f','#4a5158','#bfe3ff'];
+    for(let i=0;i<40;i++){
+      const el = document.createElement('div');
+      el.className='confetti-piece';
+      el.style.left = Math.random()*100+'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      const duration = 2500 + Math.random()*2000;
+      const drift = (Math.random()-0.5)*200;
+      el.animate([
+        { transform:`translate(0,0) rotate(0deg)`, opacity:1 },
+        { transform:`translate(${drift}px, 100vh) rotate(720deg)`, opacity:0.9 }
+      ], { duration, easing:'ease-in' });
+      setTimeout(()=>el.remove(), duration);
+    }
+  }
+</script>
+</body>
+</html>
