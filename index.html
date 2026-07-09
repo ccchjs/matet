@@ -155,6 +155,7 @@
     transform:translateX(-50%);
   }
   .bday-reveal.show{
+    opacity:1;
     animation:emerge-from-box 0.8s cubic-bezier(.2,.8,.3,1.2) forwards;
   }
   .bday-reveal.sway{
@@ -293,22 +294,6 @@
   }
 
 
-  .sound-btn{
-    position:fixed;
-    top:16px;
-    right:16px;
-    z-index:1000;
-    background:rgba(255,255,255,0.15);
-    color:var(--concrete);
-    border:1px solid rgba(255,255,255,0.35);
-    padding:8px 14px;
-    border-radius:30px;
-    font-family:'Nunito',sans-serif;
-    font-size:0.8rem;
-    font-weight:700;
-    cursor:pointer;
-    backdrop-filter:blur(4px);
-  }
 </style>
 </head>
 <body>
@@ -334,7 +319,6 @@
 
 <!-- ================= CELEBRATION (GIFT REVEAL) ================= -->
 <div id="celebrate">
-  <button class="sound-btn" id="soundBtn" onclick="unmuteMusic()">🔊 I-tap para sa tunog</button>
   <div class="gift-scene">
     <div class="bday-reveal" id="bdayReveal">
       <div class="bday-emojis">🎉🎂✨</div>
@@ -395,22 +379,11 @@
     }catch(e){}
   }
 
-  function unmuteMusic(){
-    if(ytPlayer){
-      try{
-        ytPlayer.unMute();
-        ytPlayer.setVolume(100);
-        ytPlayer.playVideo();
-      }catch(e){}
-    }
-    const btn = document.getElementById('soundBtn');
-    if(btn) btn.style.display='none';
-  }
-
   function goToCelebration(){
     document.getElementById('gate').style.display='none';
     document.getElementById('celebrate').classList.add('active');
     window.scrollTo(0,0);
+    tryPlayMusic();
     runGiftSequence();
   }
 
@@ -434,11 +407,10 @@
       boxWrap.classList.add('open');
     }, 1400);
 
-    // 3. Message emerges out of the box + confetti bursts from the box + music
+    // 3. Message emerges out of the box + confetti bursts from the box
     setTimeout(()=>{
       reveal.classList.add('show');
       launchConfettiFromBox();
-      tryPlayMusic();
     }, 2000);
 
     // 3b. Once it has risen into place, let it sway gently like a tied balloon
